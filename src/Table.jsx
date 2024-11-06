@@ -7,7 +7,7 @@ const generateData = () => {
   const data = [];
   for (let rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
     const rowId = rowIndex + 1;
-    const rowData = { row: rowId };
+    const rowData = { rowLabel: `Row ${rowId}`, row: rowId }; // Add rowLabel here
     for (const label of columnLabels) {
       const cellValue = `${label}${rowId}`; // Generate cell value
       rowData[label] = cellValue; // Add cell value to the row
@@ -20,19 +20,29 @@ const generateData = () => {
 const Table = () => {
   const [data, setData] = useState(generateData());
   const columnLabels = ["A", "B", "C"];
-  const columns = columnLabels.map((label) => ({
-    accessorKey: label,
-    header: label,
-    muiEditTextFieldProps: ({ cell }) => ({
-      onBlur: (event) => {
-        const updatedData = [...data];
-        const rowIndex = cell.row.index;
-        updatedData[rowIndex][label] = event.target.value; // Use dynamic label here
-        setData(updatedData);
-        console.log(data); // Log updated data for debugging
+  const columns = [
+    {
+      accessorKey: "rowLabel",
+      header: "Row Label",
+      enableEditing: false,
+      muiTableBodyCellProps: {
+        sx: { fontWeight: "bold" },
       },
-    }),
-  }));
+    },
+    ...columnLabels.map((label) => ({
+      accessorKey: label,
+      header: label,
+      muiEditTextFieldProps: ({ cell }) => ({
+        onBlur: (event) => {
+          const updatedData = [...data];
+          const rowIndex = cell.row.index;
+          updatedData[rowIndex][label] = event.target.value;
+          setData(updatedData);
+          console.log(updatedData);
+        },
+      }),
+    })),
+  ];
   const tableOptions = {
     enableHiding: false,
     enableFullScreenToggle: false,
