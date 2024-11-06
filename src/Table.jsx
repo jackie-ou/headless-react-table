@@ -33,15 +33,19 @@ const Table = () => {
       },
     }),
   }));
+  const tableOptions = {
+    enableHiding: false,
+    enableFullScreenToggle: false,
+    enableDensityToggle: false,
+    enableFilters: false,
+    enablePagination: false,
+    enableColumnActions: false,
+    enableSorting: false,
+    editDisplayMode: "cell",
+    enableEditing: true,
+  };
 
-  return (
-    <MaterialReactTable
-      editDisplayMode="cell"
-      columns={columns}
-      data={data}
-      enableEditing
-    />
-  );
+  return <MaterialReactTable {...tableOptions} columns={columns} data={data} />;
 };
 
 export default Table;
