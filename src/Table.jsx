@@ -3,11 +3,34 @@ import { useState } from "react";
 
 const generateData = () => {
   const columnLabels = ["A", "B", "C"];
-  const rowsCount = 5;
+  const rowLabels = [
+    "AV Infrastructure",
+    "Elemental",
+    "HELO",
+    "CC Encoder",
+    "Studio | CTRL Rooms",
+    "Switcher",
+    "Vinten",
+    "Broadcast Audio",
+    "Hallway TVs",
+    "Brio",
+    "CATV",
+    "CATV Infrastructure",
+    "CATV Routing",
+    "Chamber Pre-Session",
+    "Vote PC",
+    "Sergeant & Presiding Officer PC",
+    "Committee Support",
+    "WebEx",
+    "Room TV",
+    "Microphones (In-Room Audio)",
+    "Webpage Link Active",
+  ];
+  const rowsCount = rowLabels.length; // Use the length of rowLabels
   const data = [];
   for (let rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
     const rowId = rowIndex + 1;
-    const rowData = { rowLabel: `Row ${rowId}`, row: rowId }; // Add rowLabel here
+    const rowData = { rowLabel: rowLabels[rowIndex], row: rowId }; // Set rowLabel dynamically
     for (const label of columnLabels) {
       const cellValue = `${label}${rowId}`; // Generate cell value
       rowData[label] = cellValue; // Add cell value to the row
@@ -19,11 +42,19 @@ const generateData = () => {
 
 const Table = () => {
   const [data, setData] = useState(generateData());
+  const getToday = () => {
+    const today = new Date();
+    return today.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
   const columnLabels = ["A", "B", "C"];
   const columns = [
     {
       accessorKey: "rowLabel",
-      header: "Row Label",
+      header: getToday(), // Set today's date as the header
       enableEditing: false,
       muiTableBodyCellProps: {
         sx: { fontWeight: "bold" },
