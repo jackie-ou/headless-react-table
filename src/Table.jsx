@@ -1,47 +1,30 @@
 import { MaterialReactTable } from "material-react-table";
 import { useState } from "react";
 
-const generateData = () => {
-  const columnLabels = ["A", "B", "C"];
-  const rowLabels = [
-    "AV Infrastructure",
-    "Elemental",
-    "HELO",
-    "CC Encoder",
-    "Studio | CTRL Rooms",
-    "Switcher",
-    "Vinten",
-    "Broadcast Audio",
-    "Hallway TVs",
-    "Brio",
-    "CATV",
-    "CATV Infrastructure",
-    "CATV Routing",
-    "Chamber Pre-Session",
-    "Vote PC",
-    "Sergeant & Presiding Officer PC",
-    "Committee Support",
-    "WebEx",
-    "Room TV",
-    "Microphones (In-Room Audio)",
-    "Webpage Link Active",
-  ];
-  const rowsCount = rowLabels.length; // Use the length of rowLabels
+const generateData = (json) => {
+  // Set up constants
+  const rowHeaders = [];
+  for (let row of json) {
+    rowHeaders.push(row.rowHeaders);
+  }
+  const columnHeaders = Object.keys(json[0]);
+
+  // Generate each cell value
   const data = [];
-  for (let rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
-    const rowId = rowIndex + 1;
-    const rowData = { rowLabel: rowLabels[rowIndex], row: rowId }; // Set rowLabel dynamically
-    for (const label of columnLabels) {
-      const cellValue = `${label}${rowId}`; // Generate cell value
-      rowData[label] = cellValue; // Add cell value to the row
+  for (let row of json) {
+    const rowData = {};
+    for (let columnHeader of columnHeaders) {
+      const cellValue = row[columnHeader];
+      rowData[columnHeader] = cellValue; // Add cell value to the row
     }
     data.push(rowData);
   }
+
   return data;
 };
 
-const Table = () => {
-  const [data, setData] = useState(generateData());
+const Table = ({ json, columnHeaders }) => {
+  const [data, setData] = useState(generateData(json));
   const getToday = () => {
     const today = new Date();
     return today.toLocaleDateString("en-US", {
@@ -50,24 +33,24 @@ const Table = () => {
       day: "numeric",
     });
   };
-  const columnLabels = ["A", "B", "C"];
+
   const columns = [
     {
-      accessorKey: "rowLabel",
+      accessorKey: "rowHeaders",
       header: getToday(), // Set today's date as the header
       enableEditing: false,
       muiTableBodyCellProps: {
         sx: { fontWeight: "bold" },
       },
     },
-    ...columnLabels.map((label) => ({
-      accessorKey: label,
-      header: label,
+    ...columnHeaders.map((columnHeader) => ({
+      accessorKey: columnHeader,
+      header: columnHeader,
       muiEditTextFieldProps: ({ cell }) => ({
         onBlur: (event) => {
           const updatedData = [...data];
           const rowIndex = cell.row.index;
-          updatedData[rowIndex][label] = event.target.value;
+          updatedData[rowIndex][columnHeader] = event.target.value;
           setData(updatedData);
           console.log(updatedData);
         },
